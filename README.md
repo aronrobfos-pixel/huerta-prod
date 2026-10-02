@@ -15,7 +15,7 @@ Sitio web de la huerta escolar, hecho para el Trabajo Práctico de Laboratorio d
 
 ## Sitio publicado
 
-[https://USUARIO.github.io/NOMBRE-DEL-REPOSITORIO](https://github.com/aronrobfos-pixel/huerta-prod)
+https://github.com/aronrobfos-pixel/huerta-prod
 
 ## Tecnologías
 
