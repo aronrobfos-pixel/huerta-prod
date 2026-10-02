@@ -117,3 +117,40 @@ footer {
   .especie { width: 100%; }
   button, select { width: 100%; }
 }
+
+/* Calendario editable */
+.cal-barra { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.cal-barra h3 { margin: 0; }
+.cal-barra button { width: auto; }
+
+.cal-grilla { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 10px; }
+.cal-cab { text-align: center; font-weight: bold; color: #4a7c40; font-size: 0.85rem; padding: 4px 0; }
+.cal-grilla button.cal-dia {
+  width: auto;
+  min-height: 62px;
+  background-color: #eaf3e6;
+  color: #222;
+  border: 1px solid #cde0c9;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-size: 0.9rem;
+}
+.cal-grilla button.cal-dia:hover { background-color: #d9ead3; }
+.cal-grilla button.hoy { border: 2px solid #b87a0c; }
+.cal-grilla button.elegido { background-color: #4a7c40; color: white; }
+.cal-iconos { font-size: 0.85rem; line-height: 1.2; }
+
+#lista-tareas { list-style: none; padding: 0; }
+#lista-tareas li { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #cde0c9; }
+#lista-tareas li span { flex: 1; }
+#lista-tareas button { width: auto; padding: 4px 10px; font-size: 0.85rem; }
+
+.cal-form { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.cal-form input { flex: 1; min-width: 160px; font-size: 1rem; padding: 10px; border: 1px solid #4a7c40; border-radius: 4px; }
+
+@media (max-width: 600px) {
+  .cal-grilla button.cal-dia { min-height: 48px; font-size: 0.8rem; }
+  .cal-iconos { font-size: 0.7rem; }
+}
