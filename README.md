@@ -10,11 +10,12 @@ Sitio web de la huerta escolar, hecho para el Trabajo Práctico de Laboratorio d
 
 ## Integrantes
 
-- (completar con los nombres del grupo)
+- Aron Roble Foschi
+- Santino Echarri
 
 ## Sitio publicado
 
-https://USUARIO.github.io/NOMBRE-DEL-REPOSITORIO
+[https://USUARIO.github.io/NOMBRE-DEL-REPOSITORIO](https://github.com/aronrobfos-pixel/huerta-prod)
 
 ## Tecnologías
 
