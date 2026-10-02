@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Huerta Escolar</title>
+<meta name="description" content="Proyecto de huerta escolar: especies cultivadas, cronograma de tareas y cronograma de riego generado con JavaScript.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+<header>
+  <h1>Proyecto de Huerta Escolar</h1>
+  <p>Trabajo Práctico - Laboratorio de Programación</p>
+</header>
+
+<nav>
+  <a href="index.html" aria-current="page">Inicio</a>
+  <a href="calendario.html">Calendario de siembra</a>
+</nav>
+
+<main>
+
+  <section id="objetivo">
+    <h2>Objetivo</h2>
+    <p>
+      Nuestro objetivo es producir una parte de los vegetales que consumimos en la escuela,
+      aprendiendo en el proceso sobre ciclos de cultivo, riego responsable y trabajo en equipo.
+    </p>
+  </section>
+
+  <section id="especies">
+    <h2>Especies cultivadas</h2>
+    <div class="especies-lista">
+      <div class="especie">
+        <h3>Lechuga</h3>
+        <p>Cosecha en 28 días aprox.</p>
+      </div>
+      <div class="especie">
+        <h3>Tomate cherry</h3>
+        <p>Cosecha en 70 días aprox.</p>
+      </div>
+      <div class="especie">
+        <h3>Albahaca</h3>
+        <p>Cosecha en 21 días aprox.</p>
+      </div>
+      <div class="especie">
+        <h3>Rabanito</h3>
+        <p>Cosecha en 25 días aprox.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="cronograma">
+    <h2>Cronograma de tareas</h2>
+    <div class="tabla-scroll">
+      <table>
+        <tr>
+          <th>Semana</th>
+          <th>Tarea</th>
+          <th>Especies involucradas</th>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>Preparación del suelo y siembra</td>
+          <td>Lechuga, Rabanito, Albahaca</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Trasplante y primer riego profundo</td>
+          <td>Tomate cherry</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Deshierbe y control de plagas</td>
+          <td>Todas</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Primeras cosechas y registro de resultados</td>
+          <td>Lechuga, Rabanito</td>
+        </tr>
+      </table>
+    </div>
+
+    <h3>Cronograma de riego</h3>
+    <p>Genera, a partir de los datos cargados por el grupo, cada cuántos días se riega cada especie.</p>
+    <button onclick="regarHuerta()">Generar cronograma de riego</button>
+    <div id="riego-resultado"></div>
+  </section>
+
+</main>
+
+<footer>
+  Trabajo Práctico - Laboratorio de Programación - 6to 3ra
+</footer>
+
+<script>
+  const ritmoDeRiego = {
+    "Lechuga": 2,
+    "Tomate cherry": 3,
+    "Albahaca": 2,
+    "Rabanito": 1
+  };
+
+  function regarHuerta() {
+    const diasTotales = 14;
+    let salida = "Cronograma de riego (próximos 14 días):\n\n";
+
+    for (const especie in ritmoDeRiego) {
+      const ritmo = ritmoDeRiego[especie];
+      const diasDeRiego = [];
+      for (let dia = 1; dia <= diasTotales; dia++) {
+        if (dia % ritmo === 0) {
+          diasDeRiego.push(dia);
+        }
+      }
+      salida += especie + " (cada " + ritmo + " día/s): día " + diasDeRiego.join(", ") + "\n";
+    }
+
+    console.log(salida);
+    document.getElementById("riego-resultado").textContent = salida;
+  }
+</script>
+
+</body>
+</html>

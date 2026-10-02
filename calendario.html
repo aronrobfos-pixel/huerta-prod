@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calendario de siembra - Huerta Escolar</title>
+<meta name="description" content="Calendario de siembra de la huerta escolar por estación y selector de qué plantar en cada mes.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+
+<header>
+  <h1>Calendario de siembra</h1>
+  <p>Qué sembrar en cada estación en nuestra zona</p>
+</header>
+
+<nav>
+  <a href="index.html">Inicio</a>
+  <a href="calendario.html" aria-current="page">Calendario de siembra</a>
+</nav>
+
+<main>
+
+  <section id="estaciones">
+    <h2>Por estación</h2>
+    <div class="tabla-scroll">
+      <table>
+        <tr>
+          <th>Estación</th>
+          <th>Qué sembrar</th>
+        </tr>
+        <tr><td>Otoño (mar - may)</td><td>Lechuga, Rabanito</td></tr>
+        <tr><td>Invierno (jun - ago)</td><td>Lechuga y Rabanito hasta julio; en agosto, almácigo de Tomate cherry bajo cubierta</td></tr>
+        <tr><td>Primavera (sep - nov)</td><td>Tomate cherry, Albahaca, Lechuga, Rabanito</td></tr>
+        <tr><td>Verano (dic - feb)</td><td>Albahaca (solo en diciembre). El resto es época de riego y cosecha</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section id="selector">
+    <h2>¿Qué plantar este mes?</h2>
+    <label for="mes">Elegí un mes:</label>
+    <select id="mes"></select>
+    <ul id="mes-resultado"></ul>
+  </section>
+
+</main>
+
+<footer>
+  Trabajo Práctico - Laboratorio de Programación - 6to 3ra
+</footer>
+
+<script>
+  const nombresMeses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
+  // Meses de siembra (1 = enero ... 12 = diciembre)
+  const mesesDeSiembra = {
+    "Lechuga": [3, 4, 5, 6, 7, 8, 9, 10],
+    "Rabanito": [3, 4, 5, 6, 7, 8, 9, 10, 11],
+    "Tomate cherry": [8, 9, 10, 11],
+    "Albahaca": [9, 10, 11, 12]
+  };
+
+  const selectorMes = document.getElementById("mes");
+  const resultado = document.getElementById("mes-resultado");
+
+  for (let i = 0; i < nombresMeses.length; i++) {
+    const opcion = document.createElement("option");
+    opcion.value = i + 1;
+    opcion.textContent = nombresMeses[i];
+    selectorMes.appendChild(opcion);
+  }
+
+  function mostrarSiembra() {
+    const mes = Number(selectorMes.value);
+    resultado.innerHTML = "";
+    let hayEspecies = false;
+
+    for (const especie in mesesDeSiembra) {
+      if (mesesDeSiembra[especie].includes(mes)) {
+        const item = document.createElement("li");
+        item.textContent = especie;
+        resultado.appendChild(item);
+        hayEspecies = true;
+      }
+    }
+
+    if (!hayEspecies) {
+      resultado.innerHTML = "<li>En " + nombresMeses[mes - 1] + " no se siembra ninguna de nuestras especies.</li>";
+    }
+  }
+
+  selectorMes.addEventListener("change", mostrarSiembra);
+  selectorMes.value = new Date().getMonth() + 1;
+  mostrarSiembra();
+</script>
+
+</body>
+</html>

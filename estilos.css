@@ -1,0 +1,119 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f0f7f0;
+  color: #222;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #4a7c40;
+  color: white;
+  text-align: center;
+  padding: 25px 10px;
+}
+
+header h1 { margin: 0; }
+
+/* Menú de navegación */
+nav {
+  background-color: #3a6432;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  padding: 8px 18px;
+  border-radius: 4px;
+}
+
+nav a:hover { background-color: #4a7c40; }
+nav a[aria-current="page"] { background-color: #f0f7f0; color: #3a6432; font-weight: bold; }
+
+main {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 10px 20px;
+}
+
+section {
+  margin: 30px 0;
+  padding: 15px;
+  background-color: white;
+  border: 1px solid #cde0c9;
+  border-radius: 6px;
+}
+
+section h2 {
+  color: #4a7c40;
+  border-bottom: 2px solid #cde0c9;
+  padding-bottom: 8px;
+}
+
+.especies-lista { display: flex; flex-wrap: wrap; gap: 12px; }
+
+.especie {
+  background-color: #eaf3e6;
+  border: 1px solid #cde0c9;
+  border-radius: 6px;
+  padding: 10px 14px;
+  width: 160px;
+}
+
+.especie h3 { margin: 0 0 5px 0; font-size: 1.05rem; }
+.especie p { margin: 0; font-size: 0.9rem; }
+
+.tabla-scroll { overflow-x: auto; }
+
+table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+th, td { border: 1px solid #cde0c9; padding: 8px; text-align: left; }
+th { background-color: #eaf3e6; }
+
+button, select {
+  font-size: 1rem;
+  padding: 10px 16px;
+  border-radius: 4px;
+}
+
+button {
+  background-color: #4a7c40;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover { background-color: #3a6432; }
+select { border: 1px solid #4a7c40; background: white; }
+
+#riego-resultado {
+  white-space: pre-wrap;
+  margin-top: 10px;
+  font-family: monospace;
+  background-color: #f0f7f0;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+#mes-resultado { margin-top: 12px; }
+#mes-resultado li { margin: 4px 0; }
+
+footer {
+  text-align: center;
+  padding: 15px;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+/* Responsive: celulares (hasta 600px) */
+@media (max-width: 600px) {
+  header h1 { font-size: 1.5rem; }
+  nav { flex-direction: column; }
+  nav a { text-align: center; }
+  main { padding: 10px; }
+  .especie { width: 100%; }
+  button, select { width: 100%; }
+}
