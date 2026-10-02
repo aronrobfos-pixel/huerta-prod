@@ -85,7 +85,7 @@
     </div>
 
     <h3>Cronograma de riego</h3>
-    <p>Genera, a partir de los datos cargados por el grupo, cada cuántos días se riega cada especie.</p>
+    <p>Se genera con lo que ya está plantado (las siembras que se registran en el <a href="calendario.html">Calendario de siembra</a>): cuándo regar cada especie y cuándo cosecharla.</p>
     <button onclick="regarHuerta()">Generar cronograma de riego</button>
     <div id="riego-resultado"></div>
   </section>
@@ -96,32 +96,76 @@
   Trabajo Práctico - Laboratorio de Programación - 6to 3ra
 </footer>
 
+<script src="huerta.js"></script>
 <script>
-  const ritmoDeRiego = {
-    "Lechuga": 2,
-    "Tomate cherry": 3,
-    "Albahaca": 2,
-    "Rabanito": 1
-  };
+  const DIAS_A_MOSTRAR = 14;
+
+  // Marca en "Especies cultivadas" cuáles ya están plantadas
+  function marcarPlantadas() {
+    const plantadas = cargarSiembras().map(function (s) { return s.especie; });
+    document.querySelectorAll(".especie").forEach(function (caja) {
+      const nombre = caja.querySelector("h3").textContent;
+      if (plantadas.includes(nombre)) {
+        caja.querySelector("h3").textContent = nombre;
+        const marca = document.createElement("p");
+        marca.textContent = "✅ Plantada";
+        marca.style.fontWeight = "bold";
+        caja.appendChild(marca);
+      }
+    });
+  }
 
   function regarHuerta() {
-    const diasTotales = 14;
-    let salida = "Cronograma de riego (próximos 14 días):\n\n";
+    const siembras = cargarSiembras();
+    const caja = document.getElementById("riego-resultado");
 
-    for (const especie in ritmoDeRiego) {
-      const ritmo = ritmoDeRiego[especie];
-      const diasDeRiego = [];
-      for (let dia = 1; dia <= diasTotales; dia++) {
-        if (dia % ritmo === 0) {
-          diasDeRiego.push(dia);
-        }
-      }
-      salida += especie + " (cada " + ritmo + " día/s): día " + diasDeRiego.join(", ") + "\n";
+    if (siembras.length === 0) {
+      caja.textContent = "Todavía no hay nada plantado.\nRegistrá las siembras en el Calendario de siembra y volvé a generar el cronograma.";
+      return;
     }
 
-    console.log(salida);
-    document.getElementById("riego-resultado").textContent = salida;
+    const hoy = claveDeFecha(new Date());
+    let salida = "Cronograma de riego (próximos " + DIAS_A_MOSTRAR + " días)\n\n";
+
+    // Qué hay que regar hoy
+    const hoyRegar = siembras.filter(function (s) { return estadoDia(s, hoy) === "riego"; })
+      .map(function (s) { return s.especie; });
+    salida += hoyRegar.length > 0
+      ? "💧 Hoy hay que regar: " + hoyRegar.join(", ") + "\n\n"
+      : "Hoy no toca regar nada.\n\n";
+
+    siembras.forEach(function (s) {
+      const e = ESPECIES[s.especie];
+      const diasDesdeSiembra = diasEntre(s.fecha, hoy);
+      const diasParaCosecha = e.cosecha - diasDesdeSiembra;
+      const fechaCosecha = sumarDias(s.fecha, e.cosecha);
+
+      salida += e.icono + " " + s.especie + " (sembrada el " + formatearFecha(s.fecha) +
+        ", se riega cada " + e.riego + " día/s)\n";
+
+      if (diasDesdeSiembra < 0) {
+        salida += "   Todavía no se sembró (faltan " + (-diasDesdeSiembra) + " días).\n";
+      } else if (diasParaCosecha < 0) {
+        salida += "   Ya pasó la fecha de cosecha (" + formatearFecha(fechaCosecha) + ").\n";
+      }
+
+      const riegos = [];
+      for (let i = 0; i < DIAS_A_MOSTRAR; i++) {
+        const k = sumarDias(hoy, i);
+        if (estadoDia(s, k) === "riego") riegos.push(formatearFecha(k));
+      }
+      if (diasParaCosecha >= 0) {
+        salida += "   Próximos riegos: " + (riegos.length > 0 ? riegos.join(", ") : "ninguno en estos días") + "\n";
+        salida += "   Cosecha: " + formatearFecha(fechaCosecha) +
+          (diasParaCosecha === 0 ? " (¡hoy!)" : " (en " + diasParaCosecha + " días)") + "\n";
+      }
+      salida += "\n";
+    });
+
+    caja.textContent = salida;
   }
+
+  marcarPlantadas();
 </script>
 
 </body>

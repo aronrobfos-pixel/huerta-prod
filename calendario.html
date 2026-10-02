@@ -40,6 +40,17 @@
     </div>
   </section>
 
+  <section id="plantado">
+    <h2>Lo que ya está plantado</h2>
+    <p>Registrá cada siembra: el calendario marca solo cuándo regar (💧) y cuándo cosechar (🧺), y el cronograma de riego del Inicio usa estos mismos datos.</p>
+    <ul id="lista-siembras"></ul>
+    <div class="cal-form">
+      <select id="siembra-especie" aria-label="Especie sembrada"></select>
+      <input id="siembra-fecha" type="date" aria-label="Fecha de siembra">
+      <button id="siembra-agregar">Registrar siembra</button>
+    </div>
+  </section>
+
   <section id="calendario">
     <h2>Calendario de tareas</h2>
     <div class="cal-barra">
@@ -48,6 +59,7 @@
       <button id="mes-siguiente" aria-label="Mes siguiente">▶</button>
     </div>
     <div id="cal-grilla" class="cal-grilla"></div>
+    <p class="cal-leyenda">🌱 siembra · 💧 riego · 🧺 cosecha</p>
 
     <h3 id="panel-titulo"></h3>
     <ul id="lista-tareas"></ul>
@@ -60,7 +72,7 @@
         <option value="🍅">🍅 Cosechar</option>
         <option value="📝">📝 Nota</option>
       </select>
-      <input id="tarea-texto" type="text" maxlength="60" placeholder="Ej: regar los tomates" aria-label="Texto de la tarea">
+      <input id="tarea-texto" type="text" maxlength="60" placeholder="Ej: revisar las hojas del tomate" aria-label="Texto de la tarea">
       <button id="tarea-agregar">Agregar</button>
     </div>
   </section>
@@ -71,10 +83,8 @@
   Trabajo Práctico - Laboratorio de Programación - 6to 3ra
 </footer>
 
+<script src="huerta.js"></script>
 <script>
-  const nombresMeses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-
   // Meses de siembra (1 = enero ... 12 = diciembre)
   const mesesDeSiembra = {
     "Lechuga": [3, 4, 5, 6, 7, 8, 9, 10],
@@ -82,18 +92,13 @@
     "Tomate cherry": [8, 9, 10, 11],
     "Albahaca": [9, 10, 11, 12]
   };
-  const iconosEspecies = { "Lechuga": "🥬", "Rabanito": "🌱", "Tomate cherry": "🍅", "Albahaca": "🌿" };
 
   const hoy = new Date();
   let anio = hoy.getFullYear();
   let mes = hoy.getMonth(); // 0 = enero ... 11 = diciembre
-
-  function clave(a, m, d) {
-    return a + "-" + String(m + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
-  }
   let diaElegido = clave(anio, mes, hoy.getDate());
 
-  // Las tareas se guardan en el navegador (localStorage)
+  // Tareas manuales (localStorage) y siembras (compartidas con el Inicio)
   let tareas = {};
   try {
     tareas = JSON.parse(localStorage.getItem("huertaTareas")) || {};
@@ -105,17 +110,45 @@
       localStorage.setItem("huertaTareas", JSON.stringify(tareas));
     } catch (e) {}
   }
+  let siembras = cargarSiembras();
 
   function dibujarSiembra() {
     document.getElementById("nombre-mes").textContent = nombresMeses[mes];
     const lista = [];
     for (const especie in mesesDeSiembra) {
       if (mesesDeSiembra[especie].includes(mes + 1)) {
-        lista.push(iconosEspecies[especie] + " " + especie);
+        lista.push(ESPECIES[especie].icono + " " + especie);
       }
     }
     document.getElementById("siembra-mes").textContent =
       lista.length > 0 ? lista.join(", ") : "Este mes no se siembra ninguna de nuestras especies.";
+  }
+
+  function dibujarSiembras() {
+    const ul = document.getElementById("lista-siembras");
+    ul.innerHTML = "";
+    if (siembras.length === 0) {
+      const vacio = document.createElement("li");
+      vacio.textContent = "Todavía no registraste nada plantado.";
+      ul.appendChild(vacio);
+    }
+    siembras.forEach(function (s, i) {
+      const e = ESPECIES[s.especie];
+      const li = document.createElement("li");
+      const texto = document.createElement("span");
+      texto.textContent = e.icono + " " + s.especie + " - sembrada el " + formatearFecha(s.fecha) +
+        " - riego cada " + e.riego + " día/s - cosecha: " + formatearFecha(sumarDias(s.fecha, e.cosecha));
+      const quitar = document.createElement("button");
+      quitar.textContent = "Quitar";
+      quitar.onclick = function () {
+        siembras.splice(i, 1);
+        guardarSiembras(siembras);
+        redibujarTodo();
+      };
+      li.appendChild(texto);
+      li.appendChild(quitar);
+      ul.appendChild(li);
+    });
   }
 
   function dibujarCalendario() {
@@ -141,16 +174,25 @@
       const k = clave(anio, mes, dia);
       const boton = document.createElement("button");
       boton.className = "cal-dia";
-      if (k === clave(hoy.getFullYear(), hoy.getMonth(), hoy.getDate())) boton.classList.add("hoy");
+      if (k === claveDeFecha(hoy)) boton.classList.add("hoy");
       if (k === diaElegido) boton.classList.add("elegido");
+
+      // Íconos del día: primero los automáticos (sin repetir), después las tareas manuales
+      const iconos = [];
+      eventosDelDia(k, siembras).forEach(function (ev) {
+        if (!iconos.includes(ev.icono)) iconos.push(ev.icono);
+      });
+      (tareas[k] || []).forEach(function (t) {
+        if (!iconos.includes(t.icono)) iconos.push(t.icono);
+      });
 
       const numero = document.createElement("strong");
       numero.textContent = dia;
-      const iconos = document.createElement("span");
-      iconos.className = "cal-iconos";
-      iconos.textContent = (tareas[k] || []).slice(0, 3).map(function (t) { return t.icono; }).join("");
+      const spanIconos = document.createElement("span");
+      spanIconos.className = "cal-iconos";
+      spanIconos.textContent = iconos.slice(0, 4).join("");
       boton.appendChild(numero);
-      boton.appendChild(iconos);
+      boton.appendChild(spanIconos);
 
       boton.onclick = function () {
         diaElegido = k;
@@ -168,13 +210,22 @@
 
     const ul = document.getElementById("lista-tareas");
     ul.innerHTML = "";
+    const automaticas = eventosDelDia(diaElegido, siembras);
     const lista = tareas[diaElegido] || [];
 
-    if (lista.length === 0) {
+    if (automaticas.length === 0 && lista.length === 0) {
       const vacio = document.createElement("li");
       vacio.textContent = "No hay tareas este día. Agregá una abajo.";
       ul.appendChild(vacio);
     }
+
+    automaticas.forEach(function (ev) {
+      const li = document.createElement("li");
+      const texto = document.createElement("span");
+      texto.textContent = ev.icono + " " + ev.texto + " (automático)";
+      li.appendChild(texto);
+      ul.appendChild(li);
+    });
 
     lista.forEach(function (tarea, i) {
       const li = document.createElement("li");
@@ -207,6 +258,15 @@
       li.appendChild(borrar);
       ul.appendChild(li);
     });
+
+    // La fecha de siembra propuesta es el día elegido
+    document.getElementById("siembra-fecha").value = diaElegido;
+  }
+
+  function redibujarTodo() {
+    dibujarSiembras();
+    dibujarCalendario();
+    dibujarPanel();
   }
 
   function cambiarMes(cambio) {
@@ -235,9 +295,31 @@
     dibujarPanel();
   };
 
+  // Selector de especies, armado a partir de los datos compartidos
+  const selectorEspecie = document.getElementById("siembra-especie");
+  for (const nombre in ESPECIES) {
+    const op = document.createElement("option");
+    op.value = nombre;
+    op.textContent = ESPECIES[nombre].icono + " " + nombre;
+    selectorEspecie.appendChild(op);
+  }
+
+  document.getElementById("siembra-agregar").onclick = function () {
+    const fecha = document.getElementById("siembra-fecha").value;
+    if (fecha === "") return;
+    siembras.push({ especie: selectorEspecie.value, fecha: fecha });
+    guardarSiembras(siembras);
+    // Ir al mes de la siembra para ver los riegos
+    const p = fecha.split("-").map(Number);
+    anio = p[0];
+    mes = p[1] - 1;
+    diaElegido = fecha;
+    dibujarSiembra();
+    redibujarTodo();
+  };
+
   dibujarSiembra();
-  dibujarCalendario();
-  dibujarPanel();
+  redibujarTodo();
 </script>
 
 </body>

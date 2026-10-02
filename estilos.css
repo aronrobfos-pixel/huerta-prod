@@ -154,3 +154,11 @@ footer {
   .cal-grilla button.cal-dia { min-height: 48px; font-size: 0.8rem; }
   .cal-iconos { font-size: 0.7rem; }
 }
+
+/* Siembras registradas y leyenda del calendario */
+#lista-siembras { list-style: none; padding: 0; }
+#lista-siembras li { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #cde0c9; }
+#lista-siembras li span { flex: 1; }
+#lista-siembras button { width: auto; padding: 4px 10px; font-size: 0.85rem; }
+.cal-form input[type="date"] { flex: 0 1 180px; }
+.cal-leyenda { font-size: 0.85rem; color: #555; margin: 8px 0 0 0; }
