@@ -16,7 +16,7 @@ Qué incluye
 
  Sitio publicado
 
-[https://github.com/aronrobfos-pixel/huerta-prod](https://github.com/aronrobfos-pixel/huerta-prod)
+[https://aronrobfos-pixel.github.io/huerta-prod/](https://aronrobfos-pixel.github.io/huerta-prod/)
 
  Tecnologías
 
